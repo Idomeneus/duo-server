@@ -1,0 +1,6 @@
+<?php
+return [
+  'aws' => [
+      'region' => 'us-west-2'
+  ]
+];

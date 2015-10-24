@@ -1,0 +1,84 @@
+<database name="default" defaultIdMethod="native"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd"
+  namespace="App\Model"
+  >
+
+  <table name="user" phpName="User" allowPkInsert="true">
+
+    <column name="id" type="char" size="64" required="true" primaryKey="true"/>
+    <column name="private_key" type="char" size="64" required="true"/>
+    <column name="name" type="varchar" size="255" />
+    <column name="image_id" type="integer" />
+
+    <foreign-key foreignTable="image" phpName="Image" refPhpName="Subject">
+      <reference local="image_id" foreign="id"/>
+    </foreign-key>
+
+  </table>
+
+
+  <table name="question" phpName="Question">
+
+    <column name="id" type="integer" required="true" primaryKey="true" autoincrement="true" />
+    <column name="body" type="longvarchar" required="true" />
+    <column name="created" type="timestamp" required="true" defaultExpr="now()" />
+    <column name="author_id" type="varchar" size="64" required="true" />
+    <column name="total_votes" type="integer" required="true" defaultValue="0" />
+
+    <foreign-key foreignTable="user" phpName="Author" refPhpName="Question">
+      <reference local="author_id" foreign="id"/>
+    </foreign-key>
+
+  </table>
+
+
+  <table name="answer" phpName="Answer">
+
+    <column name="id"  type="integer" primaryKey="true" autoincrement="true" />
+    <column name="question_id"  required="true" type="integer" />
+    <column name="image_id"  required="true" type="integer" />
+    <column name="vote_count"  type="integer" required="true" defaultValue="0"/>
+    <column name="complaint_count"  type="integer" required="true"  defaultValue="0"/>
+    <column name="weight"  type="tinyint" required="true" />
+
+    <foreign-key foreignTable="question" phpName="Question" refPhpName="Answer">
+      <reference local="question_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="image" phpName="Image" refPhpName="Answer">
+      <reference local="image_id" foreign="id"/>
+    </foreign-key>
+
+  </table>
+
+
+  <table name="image" phpName="Image">
+
+    <column name="id"  type="integer" required="true" primaryKey="true" autoincrement="true" />
+    <column name="filename"  type="char" length="64" />
+    <column name="author_id"  type="char" length="64" required="true" />
+    <column name="type"  type="enum" valueSet="profile, answer" />
+
+    <foreign-key foreignTable="user" phpName="Author" refPhpName="Image" >
+      <reference local="author_id"  foreign="id" />
+    </foreign-key>
+
+  </table>
+
+
+  <table name="vote" phpName="Vote">
+
+    <column name="created"  type="timestamp" required="true" defaultExpr="now()" />
+    <column name="user_id"  type="char" length="64" required="true" />
+    <column name="answer_id"  type="integer" required="true" />
+
+    <foreign-key foreignTable="user" phpName="User" refPhpName="Vote">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="answer" phpName="Answer" refPhpName="Vote">
+      <reference local="answer_id" foreign="id"/>
+    </foreign-key>
+
+  </table>
+
+</database>

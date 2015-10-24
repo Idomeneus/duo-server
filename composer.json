@@ -1,0 +1,18 @@
+{
+  "require": {
+    "slim/slim": "^3.0@RC",
+    "aws/aws-sdk-php": "^3.8",
+    "propel/propel": "^2.0@dev",
+    "guzzlehttp/guzzle": "^6.1"
+  },
+  "autoload": {
+    "files": [
+      "config/define_middleware.php",
+      "config/define_routes.php",
+      "config/define_services.php"
+    ],
+    "psr-4": {
+      "\\": "app"
+    }
+  }
+}
