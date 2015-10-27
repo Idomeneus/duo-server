@@ -97,14 +97,6 @@ abstract class Answer implements ActiveRecordInterface
     protected $vote_count;
 
     /**
-     * The value for the complaint_count field.
-     *
-     * Note: this column has a database default value of: 0
-     * @var        int
-     */
-    protected $complaint_count;
-
-    /**
      * The value for the weight field.
      *
      * @var        int
@@ -150,7 +142,6 @@ abstract class Answer implements ActiveRecordInterface
     public function applyDefaultValues()
     {
         $this->vote_count = 0;
-        $this->complaint_count = 0;
     }
 
     /**
@@ -418,16 +409,6 @@ abstract class Answer implements ActiveRecordInterface
     }
 
     /**
-     * Get the [complaint_count] column value.
-     *
-     * @return int
-     */
-    public function getComplaintCount()
-    {
-        return $this->complaint_count;
-    }
-
-    /**
      * Get the [weight] column value.
      *
      * @return int
@@ -526,26 +507,6 @@ abstract class Answer implements ActiveRecordInterface
     } // setVoteCount()
 
     /**
-     * Set the value of [complaint_count] column.
-     *
-     * @param int $v new value
-     * @return $this|\App\Model\Answer The current object (for fluent API support)
-     */
-    public function setComplaintCount($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->complaint_count !== $v) {
-            $this->complaint_count = $v;
-            $this->modifiedColumns[AnswerTableMap::COL_COMPLAINT_COUNT] = true;
-        }
-
-        return $this;
-    } // setComplaintCount()
-
-    /**
      * Set the value of [weight] column.
      *
      * @param int $v new value
@@ -576,10 +537,6 @@ abstract class Answer implements ActiveRecordInterface
     public function hasOnlyDefaultValues()
     {
             if ($this->vote_count !== 0) {
-                return false;
-            }
-
-            if ($this->complaint_count !== 0) {
                 return false;
             }
 
@@ -621,10 +578,7 @@ abstract class Answer implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : AnswerTableMap::translateFieldName('VoteCount', TableMap::TYPE_PHPNAME, $indexType)];
             $this->vote_count = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : AnswerTableMap::translateFieldName('ComplaintCount', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->complaint_count = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : AnswerTableMap::translateFieldName('Weight', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : AnswerTableMap::translateFieldName('Weight', TableMap::TYPE_PHPNAME, $indexType)];
             $this->weight = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -634,7 +588,7 @@ abstract class Answer implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = AnswerTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = AnswerTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\Answer'), 0, $e);
@@ -889,9 +843,6 @@ abstract class Answer implements ActiveRecordInterface
         if ($this->isColumnModified(AnswerTableMap::COL_VOTE_COUNT)) {
             $modifiedColumns[':p' . $index++]  = 'vote_count';
         }
-        if ($this->isColumnModified(AnswerTableMap::COL_COMPLAINT_COUNT)) {
-            $modifiedColumns[':p' . $index++]  = 'complaint_count';
-        }
         if ($this->isColumnModified(AnswerTableMap::COL_WEIGHT)) {
             $modifiedColumns[':p' . $index++]  = 'weight';
         }
@@ -917,9 +868,6 @@ abstract class Answer implements ActiveRecordInterface
                         break;
                     case 'vote_count':
                         $stmt->bindValue($identifier, $this->vote_count, PDO::PARAM_INT);
-                        break;
-                    case 'complaint_count':
-                        $stmt->bindValue($identifier, $this->complaint_count, PDO::PARAM_INT);
                         break;
                     case 'weight':
                         $stmt->bindValue($identifier, $this->weight, PDO::PARAM_INT);
@@ -999,9 +947,6 @@ abstract class Answer implements ActiveRecordInterface
                 return $this->getVoteCount();
                 break;
             case 4:
-                return $this->getComplaintCount();
-                break;
-            case 5:
                 return $this->getWeight();
                 break;
             default:
@@ -1038,8 +983,7 @@ abstract class Answer implements ActiveRecordInterface
             $keys[1] => $this->getQuestionId(),
             $keys[2] => $this->getImageId(),
             $keys[3] => $this->getVoteCount(),
-            $keys[4] => $this->getComplaintCount(),
-            $keys[5] => $this->getWeight(),
+            $keys[4] => $this->getWeight(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1139,9 +1083,6 @@ abstract class Answer implements ActiveRecordInterface
                 $this->setVoteCount($value);
                 break;
             case 4:
-                $this->setComplaintCount($value);
-                break;
-            case 5:
                 $this->setWeight($value);
                 break;
         } // switch()
@@ -1183,10 +1124,7 @@ abstract class Answer implements ActiveRecordInterface
             $this->setVoteCount($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setComplaintCount($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setWeight($arr[$keys[5]]);
+            $this->setWeight($arr[$keys[4]]);
         }
     }
 
@@ -1240,9 +1178,6 @@ abstract class Answer implements ActiveRecordInterface
         }
         if ($this->isColumnModified(AnswerTableMap::COL_VOTE_COUNT)) {
             $criteria->add(AnswerTableMap::COL_VOTE_COUNT, $this->vote_count);
-        }
-        if ($this->isColumnModified(AnswerTableMap::COL_COMPLAINT_COUNT)) {
-            $criteria->add(AnswerTableMap::COL_COMPLAINT_COUNT, $this->complaint_count);
         }
         if ($this->isColumnModified(AnswerTableMap::COL_WEIGHT)) {
             $criteria->add(AnswerTableMap::COL_WEIGHT, $this->weight);
@@ -1336,7 +1271,6 @@ abstract class Answer implements ActiveRecordInterface
         $copyObj->setQuestionId($this->getQuestionId());
         $copyObj->setImageId($this->getImageId());
         $copyObj->setVoteCount($this->getVoteCount());
-        $copyObj->setComplaintCount($this->getComplaintCount());
         $copyObj->setWeight($this->getWeight());
 
         if ($deepCopy) {
@@ -1758,7 +1692,6 @@ abstract class Answer implements ActiveRecordInterface
         $this->question_id = null;
         $this->image_id = null;
         $this->vote_count = null;
-        $this->complaint_count = null;
         $this->weight = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();

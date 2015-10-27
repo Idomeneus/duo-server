@@ -59,7 +59,7 @@ class QuestionTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 8;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class QuestionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /**
      * the column name for the id field
@@ -97,6 +97,21 @@ class QuestionTableMap extends TableMap
     const COL_TOTAL_VOTES = 'question.total_votes';
 
     /**
+     * the column name for the complaint_count field
+     */
+    const COL_COMPLAINT_COUNT = 'question.complaint_count';
+
+    /**
+     * the column name for the category field
+     */
+    const COL_CATEGORY = 'question.category';
+
+    /**
+     * the column name for the category_stem field
+     */
+    const COL_CATEGORY_STEM = 'question.category_stem';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -108,11 +123,11 @@ class QuestionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Body', 'Created', 'AuthorId', 'TotalVotes', ),
-        self::TYPE_CAMELNAME     => array('id', 'body', 'created', 'authorId', 'totalVotes', ),
-        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID, QuestionTableMap::COL_BODY, QuestionTableMap::COL_CREATED, QuestionTableMap::COL_AUTHOR_ID, QuestionTableMap::COL_TOTAL_VOTES, ),
-        self::TYPE_FIELDNAME     => array('id', 'body', 'created', 'author_id', 'total_votes', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'Body', 'Created', 'AuthorId', 'TotalVotes', 'ComplaintCount', 'Category', 'CategoryStem', ),
+        self::TYPE_CAMELNAME     => array('id', 'body', 'created', 'authorId', 'totalVotes', 'complaintCount', 'category', 'categoryStem', ),
+        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID, QuestionTableMap::COL_BODY, QuestionTableMap::COL_CREATED, QuestionTableMap::COL_AUTHOR_ID, QuestionTableMap::COL_TOTAL_VOTES, QuestionTableMap::COL_COMPLAINT_COUNT, QuestionTableMap::COL_CATEGORY, QuestionTableMap::COL_CATEGORY_STEM, ),
+        self::TYPE_FIELDNAME     => array('id', 'body', 'created', 'author_id', 'total_votes', 'complaint_count', 'category', 'category_stem', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -122,11 +137,11 @@ class QuestionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Body' => 1, 'Created' => 2, 'AuthorId' => 3, 'TotalVotes' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'body' => 1, 'created' => 2, 'authorId' => 3, 'totalVotes' => 4, ),
-        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID => 0, QuestionTableMap::COL_BODY => 1, QuestionTableMap::COL_CREATED => 2, QuestionTableMap::COL_AUTHOR_ID => 3, QuestionTableMap::COL_TOTAL_VOTES => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'body' => 1, 'created' => 2, 'author_id' => 3, 'total_votes' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Body' => 1, 'Created' => 2, 'AuthorId' => 3, 'TotalVotes' => 4, 'ComplaintCount' => 5, 'Category' => 6, 'CategoryStem' => 7, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'body' => 1, 'created' => 2, 'authorId' => 3, 'totalVotes' => 4, 'complaintCount' => 5, 'category' => 6, 'categoryStem' => 7, ),
+        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID => 0, QuestionTableMap::COL_BODY => 1, QuestionTableMap::COL_CREATED => 2, QuestionTableMap::COL_AUTHOR_ID => 3, QuestionTableMap::COL_TOTAL_VOTES => 4, QuestionTableMap::COL_COMPLAINT_COUNT => 5, QuestionTableMap::COL_CATEGORY => 6, QuestionTableMap::COL_CATEGORY_STEM => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'body' => 1, 'created' => 2, 'author_id' => 3, 'total_votes' => 4, 'complaint_count' => 5, 'category' => 6, 'category_stem' => 7, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -151,6 +166,9 @@ class QuestionTableMap extends TableMap
         $this->addColumn('created', 'Created', 'TIMESTAMP', true, null, 'now()');
         $this->addForeignKey('author_id', 'AuthorId', 'VARCHAR', 'user', 'id', true, 64, null);
         $this->addColumn('total_votes', 'TotalVotes', 'INTEGER', true, null, 0);
+        $this->addColumn('complaint_count', 'ComplaintCount', 'INTEGER', true, null, 0);
+        $this->addColumn('category', 'Category', 'VARCHAR', false, 255, null);
+        $this->addColumn('category_stem', 'CategoryStem', 'VARCHAR', false, 255, null);
     } // initialize()
 
     /**
@@ -320,12 +338,18 @@ class QuestionTableMap extends TableMap
             $criteria->addSelectColumn(QuestionTableMap::COL_CREATED);
             $criteria->addSelectColumn(QuestionTableMap::COL_AUTHOR_ID);
             $criteria->addSelectColumn(QuestionTableMap::COL_TOTAL_VOTES);
+            $criteria->addSelectColumn(QuestionTableMap::COL_COMPLAINT_COUNT);
+            $criteria->addSelectColumn(QuestionTableMap::COL_CATEGORY);
+            $criteria->addSelectColumn(QuestionTableMap::COL_CATEGORY_STEM);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.body');
             $criteria->addSelectColumn($alias . '.created');
             $criteria->addSelectColumn($alias . '.author_id');
             $criteria->addSelectColumn($alias . '.total_votes');
+            $criteria->addSelectColumn($alias . '.complaint_count');
+            $criteria->addSelectColumn($alias . '.category');
+            $criteria->addSelectColumn($alias . '.category_stem');
         }
     }
 

@@ -105,6 +105,28 @@ abstract class Question implements ActiveRecordInterface
     protected $total_votes;
 
     /**
+     * The value for the complaint_count field.
+     *
+     * Note: this column has a database default value of: 0
+     * @var        int
+     */
+    protected $complaint_count;
+
+    /**
+     * The value for the category field.
+     *
+     * @var        string
+     */
+    protected $category;
+
+    /**
+     * The value for the category_stem field.
+     *
+     * @var        string
+     */
+    protected $category_stem;
+
+    /**
      * @var        ChildUser
      */
     protected $aAuthor;
@@ -138,6 +160,7 @@ abstract class Question implements ActiveRecordInterface
     public function applyDefaultValues()
     {
         $this->total_votes = 0;
+        $this->complaint_count = 0;
     }
 
     /**
@@ -425,6 +448,36 @@ abstract class Question implements ActiveRecordInterface
     }
 
     /**
+     * Get the [complaint_count] column value.
+     *
+     * @return int
+     */
+    public function getComplaintCount()
+    {
+        return $this->complaint_count;
+    }
+
+    /**
+     * Get the [category] column value.
+     *
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * Get the [category_stem] column value.
+     *
+     * @return string
+     */
+    public function getCategoryStem()
+    {
+        return $this->category_stem;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -529,6 +582,66 @@ abstract class Question implements ActiveRecordInterface
     } // setTotalVotes()
 
     /**
+     * Set the value of [complaint_count] column.
+     *
+     * @param int $v new value
+     * @return $this|\App\Model\Question The current object (for fluent API support)
+     */
+    public function setComplaintCount($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->complaint_count !== $v) {
+            $this->complaint_count = $v;
+            $this->modifiedColumns[QuestionTableMap::COL_COMPLAINT_COUNT] = true;
+        }
+
+        return $this;
+    } // setComplaintCount()
+
+    /**
+     * Set the value of [category] column.
+     *
+     * @param string $v new value
+     * @return $this|\App\Model\Question The current object (for fluent API support)
+     */
+    public function setCategory($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->category !== $v) {
+            $this->category = $v;
+            $this->modifiedColumns[QuestionTableMap::COL_CATEGORY] = true;
+        }
+
+        return $this;
+    } // setCategory()
+
+    /**
+     * Set the value of [category_stem] column.
+     *
+     * @param string $v new value
+     * @return $this|\App\Model\Question The current object (for fluent API support)
+     */
+    public function setCategoryStem($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->category_stem !== $v) {
+            $this->category_stem = $v;
+            $this->modifiedColumns[QuestionTableMap::COL_CATEGORY_STEM] = true;
+        }
+
+        return $this;
+    } // setCategoryStem()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -539,6 +652,10 @@ abstract class Question implements ActiveRecordInterface
     public function hasOnlyDefaultValues()
     {
             if ($this->total_votes !== 0) {
+                return false;
+            }
+
+            if ($this->complaint_count !== 0) {
                 return false;
             }
 
@@ -585,6 +702,15 @@ abstract class Question implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : QuestionTableMap::translateFieldName('TotalVotes', TableMap::TYPE_PHPNAME, $indexType)];
             $this->total_votes = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : QuestionTableMap::translateFieldName('ComplaintCount', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->complaint_count = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : QuestionTableMap::translateFieldName('Category', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->category = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : QuestionTableMap::translateFieldName('CategoryStem', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->category_stem = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -593,7 +719,7 @@ abstract class Question implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = QuestionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = QuestionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\Question'), 0, $e);
@@ -840,6 +966,15 @@ abstract class Question implements ActiveRecordInterface
         if ($this->isColumnModified(QuestionTableMap::COL_TOTAL_VOTES)) {
             $modifiedColumns[':p' . $index++]  = 'total_votes';
         }
+        if ($this->isColumnModified(QuestionTableMap::COL_COMPLAINT_COUNT)) {
+            $modifiedColumns[':p' . $index++]  = 'complaint_count';
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_CATEGORY)) {
+            $modifiedColumns[':p' . $index++]  = 'category';
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_CATEGORY_STEM)) {
+            $modifiedColumns[':p' . $index++]  = 'category_stem';
+        }
 
         $sql = sprintf(
             'INSERT INTO question (%s) VALUES (%s)',
@@ -865,6 +1000,15 @@ abstract class Question implements ActiveRecordInterface
                         break;
                     case 'total_votes':
                         $stmt->bindValue($identifier, $this->total_votes, PDO::PARAM_INT);
+                        break;
+                    case 'complaint_count':
+                        $stmt->bindValue($identifier, $this->complaint_count, PDO::PARAM_INT);
+                        break;
+                    case 'category':
+                        $stmt->bindValue($identifier, $this->category, PDO::PARAM_STR);
+                        break;
+                    case 'category_stem':
+                        $stmt->bindValue($identifier, $this->category_stem, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -943,6 +1087,15 @@ abstract class Question implements ActiveRecordInterface
             case 4:
                 return $this->getTotalVotes();
                 break;
+            case 5:
+                return $this->getComplaintCount();
+                break;
+            case 6:
+                return $this->getCategory();
+                break;
+            case 7:
+                return $this->getCategoryStem();
+                break;
             default:
                 return null;
                 break;
@@ -978,6 +1131,9 @@ abstract class Question implements ActiveRecordInterface
             $keys[2] => $this->getCreated(),
             $keys[3] => $this->getAuthorId(),
             $keys[4] => $this->getTotalVotes(),
+            $keys[5] => $this->getComplaintCount(),
+            $keys[6] => $this->getCategory(),
+            $keys[7] => $this->getCategoryStem(),
         );
 
         $utc = new \DateTimeZone('utc');
@@ -1072,6 +1228,15 @@ abstract class Question implements ActiveRecordInterface
             case 4:
                 $this->setTotalVotes($value);
                 break;
+            case 5:
+                $this->setComplaintCount($value);
+                break;
+            case 6:
+                $this->setCategory($value);
+                break;
+            case 7:
+                $this->setCategoryStem($value);
+                break;
         } // switch()
 
         return $this;
@@ -1112,6 +1277,15 @@ abstract class Question implements ActiveRecordInterface
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setTotalVotes($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setComplaintCount($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setCategory($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setCategoryStem($arr[$keys[7]]);
         }
     }
 
@@ -1168,6 +1342,15 @@ abstract class Question implements ActiveRecordInterface
         }
         if ($this->isColumnModified(QuestionTableMap::COL_TOTAL_VOTES)) {
             $criteria->add(QuestionTableMap::COL_TOTAL_VOTES, $this->total_votes);
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_COMPLAINT_COUNT)) {
+            $criteria->add(QuestionTableMap::COL_COMPLAINT_COUNT, $this->complaint_count);
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_CATEGORY)) {
+            $criteria->add(QuestionTableMap::COL_CATEGORY, $this->category);
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_CATEGORY_STEM)) {
+            $criteria->add(QuestionTableMap::COL_CATEGORY_STEM, $this->category_stem);
         }
 
         return $criteria;
@@ -1259,6 +1442,9 @@ abstract class Question implements ActiveRecordInterface
         $copyObj->setCreated($this->getCreated());
         $copyObj->setAuthorId($this->getAuthorId());
         $copyObj->setTotalVotes($this->getTotalVotes());
+        $copyObj->setComplaintCount($this->getComplaintCount());
+        $copyObj->setCategory($this->getCategory());
+        $copyObj->setCategoryStem($this->getCategoryStem());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1626,6 +1812,9 @@ abstract class Question implements ActiveRecordInterface
         $this->created = null;
         $this->author_id = null;
         $this->total_votes = null;
+        $this->complaint_count = null;
+        $this->category = null;
+        $this->category_stem = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

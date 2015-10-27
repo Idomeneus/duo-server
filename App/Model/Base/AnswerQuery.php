@@ -24,14 +24,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAnswerQuery orderByQuestionId($order = Criteria::ASC) Order by the question_id column
  * @method     ChildAnswerQuery orderByImageId($order = Criteria::ASC) Order by the image_id column
  * @method     ChildAnswerQuery orderByVoteCount($order = Criteria::ASC) Order by the vote_count column
- * @method     ChildAnswerQuery orderByComplaintCount($order = Criteria::ASC) Order by the complaint_count column
  * @method     ChildAnswerQuery orderByWeight($order = Criteria::ASC) Order by the weight column
  *
  * @method     ChildAnswerQuery groupById() Group by the id column
  * @method     ChildAnswerQuery groupByQuestionId() Group by the question_id column
  * @method     ChildAnswerQuery groupByImageId() Group by the image_id column
  * @method     ChildAnswerQuery groupByVoteCount() Group by the vote_count column
- * @method     ChildAnswerQuery groupByComplaintCount() Group by the complaint_count column
  * @method     ChildAnswerQuery groupByWeight() Group by the weight column
  *
  * @method     ChildAnswerQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -81,7 +79,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAnswer findOneByQuestionId(int $question_id) Return the first ChildAnswer filtered by the question_id column
  * @method     ChildAnswer findOneByImageId(int $image_id) Return the first ChildAnswer filtered by the image_id column
  * @method     ChildAnswer findOneByVoteCount(int $vote_count) Return the first ChildAnswer filtered by the vote_count column
- * @method     ChildAnswer findOneByComplaintCount(int $complaint_count) Return the first ChildAnswer filtered by the complaint_count column
  * @method     ChildAnswer findOneByWeight(int $weight) Return the first ChildAnswer filtered by the weight column *
 
  * @method     ChildAnswer requirePk($key, ConnectionInterface $con = null) Return the ChildAnswer by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -91,7 +88,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAnswer requireOneByQuestionId(int $question_id) Return the first ChildAnswer filtered by the question_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAnswer requireOneByImageId(int $image_id) Return the first ChildAnswer filtered by the image_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAnswer requireOneByVoteCount(int $vote_count) Return the first ChildAnswer filtered by the vote_count column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildAnswer requireOneByComplaintCount(int $complaint_count) Return the first ChildAnswer filtered by the complaint_count column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAnswer requireOneByWeight(int $weight) Return the first ChildAnswer filtered by the weight column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildAnswer[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildAnswer objects based on current ModelCriteria
@@ -99,7 +95,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAnswer[]|ObjectCollection findByQuestionId(int $question_id) Return ChildAnswer objects filtered by the question_id column
  * @method     ChildAnswer[]|ObjectCollection findByImageId(int $image_id) Return ChildAnswer objects filtered by the image_id column
  * @method     ChildAnswer[]|ObjectCollection findByVoteCount(int $vote_count) Return ChildAnswer objects filtered by the vote_count column
- * @method     ChildAnswer[]|ObjectCollection findByComplaintCount(int $complaint_count) Return ChildAnswer objects filtered by the complaint_count column
  * @method     ChildAnswer[]|ObjectCollection findByWeight(int $weight) Return ChildAnswer objects filtered by the weight column
  * @method     ChildAnswer[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -193,7 +188,7 @@ abstract class AnswerQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, question_id, image_id, vote_count, complaint_count, weight FROM answer WHERE id = :p0';
+        $sql = 'SELECT id, question_id, image_id, vote_count, weight FROM answer WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -449,47 +444,6 @@ abstract class AnswerQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(AnswerTableMap::COL_VOTE_COUNT, $voteCount, $comparison);
-    }
-
-    /**
-     * Filter the query on the complaint_count column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByComplaintCount(1234); // WHERE complaint_count = 1234
-     * $query->filterByComplaintCount(array(12, 34)); // WHERE complaint_count IN (12, 34)
-     * $query->filterByComplaintCount(array('min' => 12)); // WHERE complaint_count > 12
-     * </code>
-     *
-     * @param     mixed $complaintCount The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildAnswerQuery The current query, for fluid interface
-     */
-    public function filterByComplaintCount($complaintCount = null, $comparison = null)
-    {
-        if (is_array($complaintCount)) {
-            $useMinMax = false;
-            if (isset($complaintCount['min'])) {
-                $this->addUsingAlias(AnswerTableMap::COL_COMPLAINT_COUNT, $complaintCount['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($complaintCount['max'])) {
-                $this->addUsingAlias(AnswerTableMap::COL_COMPLAINT_COUNT, $complaintCount['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(AnswerTableMap::COL_COMPLAINT_COUNT, $complaintCount, $comparison);
     }
 
     /**

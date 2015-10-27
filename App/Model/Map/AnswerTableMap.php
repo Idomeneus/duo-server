@@ -59,7 +59,7 @@ class AnswerTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class AnswerTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
@@ -92,11 +92,6 @@ class AnswerTableMap extends TableMap
     const COL_VOTE_COUNT = 'answer.vote_count';
 
     /**
-     * the column name for the complaint_count field
-     */
-    const COL_COMPLAINT_COUNT = 'answer.complaint_count';
-
-    /**
      * the column name for the weight field
      */
     const COL_WEIGHT = 'answer.weight';
@@ -113,11 +108,11 @@ class AnswerTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'QuestionId', 'ImageId', 'VoteCount', 'ComplaintCount', 'Weight', ),
-        self::TYPE_CAMELNAME     => array('id', 'questionId', 'imageId', 'voteCount', 'complaintCount', 'weight', ),
-        self::TYPE_COLNAME       => array(AnswerTableMap::COL_ID, AnswerTableMap::COL_QUESTION_ID, AnswerTableMap::COL_IMAGE_ID, AnswerTableMap::COL_VOTE_COUNT, AnswerTableMap::COL_COMPLAINT_COUNT, AnswerTableMap::COL_WEIGHT, ),
-        self::TYPE_FIELDNAME     => array('id', 'question_id', 'image_id', 'vote_count', 'complaint_count', 'weight', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id', 'QuestionId', 'ImageId', 'VoteCount', 'Weight', ),
+        self::TYPE_CAMELNAME     => array('id', 'questionId', 'imageId', 'voteCount', 'weight', ),
+        self::TYPE_COLNAME       => array(AnswerTableMap::COL_ID, AnswerTableMap::COL_QUESTION_ID, AnswerTableMap::COL_IMAGE_ID, AnswerTableMap::COL_VOTE_COUNT, AnswerTableMap::COL_WEIGHT, ),
+        self::TYPE_FIELDNAME     => array('id', 'question_id', 'image_id', 'vote_count', 'weight', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -127,11 +122,11 @@ class AnswerTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'QuestionId' => 1, 'ImageId' => 2, 'VoteCount' => 3, 'ComplaintCount' => 4, 'Weight' => 5, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'questionId' => 1, 'imageId' => 2, 'voteCount' => 3, 'complaintCount' => 4, 'weight' => 5, ),
-        self::TYPE_COLNAME       => array(AnswerTableMap::COL_ID => 0, AnswerTableMap::COL_QUESTION_ID => 1, AnswerTableMap::COL_IMAGE_ID => 2, AnswerTableMap::COL_VOTE_COUNT => 3, AnswerTableMap::COL_COMPLAINT_COUNT => 4, AnswerTableMap::COL_WEIGHT => 5, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'question_id' => 1, 'image_id' => 2, 'vote_count' => 3, 'complaint_count' => 4, 'weight' => 5, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'QuestionId' => 1, 'ImageId' => 2, 'VoteCount' => 3, 'Weight' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'questionId' => 1, 'imageId' => 2, 'voteCount' => 3, 'weight' => 4, ),
+        self::TYPE_COLNAME       => array(AnswerTableMap::COL_ID => 0, AnswerTableMap::COL_QUESTION_ID => 1, AnswerTableMap::COL_IMAGE_ID => 2, AnswerTableMap::COL_VOTE_COUNT => 3, AnswerTableMap::COL_WEIGHT => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'question_id' => 1, 'image_id' => 2, 'vote_count' => 3, 'weight' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -155,7 +150,6 @@ class AnswerTableMap extends TableMap
         $this->addForeignKey('question_id', 'QuestionId', 'INTEGER', 'question', 'id', true, null, null);
         $this->addForeignKey('image_id', 'ImageId', 'INTEGER', 'image', 'id', true, null, null);
         $this->addColumn('vote_count', 'VoteCount', 'INTEGER', true, null, 0);
-        $this->addColumn('complaint_count', 'ComplaintCount', 'INTEGER', true, null, 0);
         $this->addColumn('weight', 'Weight', 'TINYINT', true, null, null);
     } // initialize()
 
@@ -332,14 +326,12 @@ class AnswerTableMap extends TableMap
             $criteria->addSelectColumn(AnswerTableMap::COL_QUESTION_ID);
             $criteria->addSelectColumn(AnswerTableMap::COL_IMAGE_ID);
             $criteria->addSelectColumn(AnswerTableMap::COL_VOTE_COUNT);
-            $criteria->addSelectColumn(AnswerTableMap::COL_COMPLAINT_COUNT);
             $criteria->addSelectColumn(AnswerTableMap::COL_WEIGHT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.question_id');
             $criteria->addSelectColumn($alias . '.image_id');
             $criteria->addSelectColumn($alias . '.vote_count');
-            $criteria->addSelectColumn($alias . '.complaint_count');
             $criteria->addSelectColumn($alias . '.weight');
         }
     }

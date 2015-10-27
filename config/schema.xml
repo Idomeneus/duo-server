@@ -25,6 +25,9 @@
     <column name="created" type="timestamp" required="true" defaultExpr="now()" />
     <column name="author_id" type="varchar" size="64" required="true" />
     <column name="total_votes" type="integer" required="true" defaultValue="0" />
+    <column name="complaint_count"  type="integer" required="true"  defaultValue="0"/>
+    <column name="category" type="varchar" />
+    <column name="category_stem" type="varchar" />
 
     <foreign-key foreignTable="user" phpName="Author" refPhpName="Question">
       <reference local="author_id" foreign="id"/>
@@ -39,7 +42,6 @@
     <column name="question_id"  required="true" type="integer" />
     <column name="image_id"  required="true" type="integer" />
     <column name="vote_count"  type="integer" required="true" defaultValue="0"/>
-    <column name="complaint_count"  type="integer" required="true"  defaultValue="0"/>
     <column name="weight"  type="tinyint" required="true" />
 
     <foreign-key foreignTable="question" phpName="Question" refPhpName="Answer">

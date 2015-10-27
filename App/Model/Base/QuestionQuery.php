@@ -25,12 +25,18 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestionQuery orderByCreated($order = Criteria::ASC) Order by the created column
  * @method     ChildQuestionQuery orderByAuthorId($order = Criteria::ASC) Order by the author_id column
  * @method     ChildQuestionQuery orderByTotalVotes($order = Criteria::ASC) Order by the total_votes column
+ * @method     ChildQuestionQuery orderByComplaintCount($order = Criteria::ASC) Order by the complaint_count column
+ * @method     ChildQuestionQuery orderByCategory($order = Criteria::ASC) Order by the category column
+ * @method     ChildQuestionQuery orderByCategoryStem($order = Criteria::ASC) Order by the category_stem column
  *
  * @method     ChildQuestionQuery groupById() Group by the id column
  * @method     ChildQuestionQuery groupByBody() Group by the body column
  * @method     ChildQuestionQuery groupByCreated() Group by the created column
  * @method     ChildQuestionQuery groupByAuthorId() Group by the author_id column
  * @method     ChildQuestionQuery groupByTotalVotes() Group by the total_votes column
+ * @method     ChildQuestionQuery groupByComplaintCount() Group by the complaint_count column
+ * @method     ChildQuestionQuery groupByCategory() Group by the category column
+ * @method     ChildQuestionQuery groupByCategoryStem() Group by the category_stem column
  *
  * @method     ChildQuestionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildQuestionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -69,7 +75,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestion findOneByBody(string $body) Return the first ChildQuestion filtered by the body column
  * @method     ChildQuestion findOneByCreated(string $created) Return the first ChildQuestion filtered by the created column
  * @method     ChildQuestion findOneByAuthorId(string $author_id) Return the first ChildQuestion filtered by the author_id column
- * @method     ChildQuestion findOneByTotalVotes(int $total_votes) Return the first ChildQuestion filtered by the total_votes column *
+ * @method     ChildQuestion findOneByTotalVotes(int $total_votes) Return the first ChildQuestion filtered by the total_votes column
+ * @method     ChildQuestion findOneByComplaintCount(int $complaint_count) Return the first ChildQuestion filtered by the complaint_count column
+ * @method     ChildQuestion findOneByCategory(string $category) Return the first ChildQuestion filtered by the category column
+ * @method     ChildQuestion findOneByCategoryStem(string $category_stem) Return the first ChildQuestion filtered by the category_stem column *
 
  * @method     ChildQuestion requirePk($key, ConnectionInterface $con = null) Return the ChildQuestion by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOne(ConnectionInterface $con = null) Return the first ChildQuestion matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -79,6 +88,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestion requireOneByCreated(string $created) Return the first ChildQuestion filtered by the created column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOneByAuthorId(string $author_id) Return the first ChildQuestion filtered by the author_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOneByTotalVotes(int $total_votes) Return the first ChildQuestion filtered by the total_votes column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByComplaintCount(int $complaint_count) Return the first ChildQuestion filtered by the complaint_count column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByCategory(string $category) Return the first ChildQuestion filtered by the category column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByCategoryStem(string $category_stem) Return the first ChildQuestion filtered by the category_stem column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildQuestion[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildQuestion objects based on current ModelCriteria
  * @method     ChildQuestion[]|ObjectCollection findById(int $id) Return ChildQuestion objects filtered by the id column
@@ -86,6 +98,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestion[]|ObjectCollection findByCreated(string $created) Return ChildQuestion objects filtered by the created column
  * @method     ChildQuestion[]|ObjectCollection findByAuthorId(string $author_id) Return ChildQuestion objects filtered by the author_id column
  * @method     ChildQuestion[]|ObjectCollection findByTotalVotes(int $total_votes) Return ChildQuestion objects filtered by the total_votes column
+ * @method     ChildQuestion[]|ObjectCollection findByComplaintCount(int $complaint_count) Return ChildQuestion objects filtered by the complaint_count column
+ * @method     ChildQuestion[]|ObjectCollection findByCategory(string $category) Return ChildQuestion objects filtered by the category column
+ * @method     ChildQuestion[]|ObjectCollection findByCategoryStem(string $category_stem) Return ChildQuestion objects filtered by the category_stem column
  * @method     ChildQuestion[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -178,7 +193,7 @@ abstract class QuestionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, body, created, author_id, total_votes FROM question WHERE id = :p0';
+        $sql = 'SELECT id, body, created, author_id, total_votes, complaint_count, category, category_stem FROM question WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -449,6 +464,105 @@ abstract class QuestionQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(QuestionTableMap::COL_TOTAL_VOTES, $totalVotes, $comparison);
+    }
+
+    /**
+     * Filter the query on the complaint_count column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByComplaintCount(1234); // WHERE complaint_count = 1234
+     * $query->filterByComplaintCount(array(12, 34)); // WHERE complaint_count IN (12, 34)
+     * $query->filterByComplaintCount(array('min' => 12)); // WHERE complaint_count > 12
+     * </code>
+     *
+     * @param     mixed $complaintCount The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function filterByComplaintCount($complaintCount = null, $comparison = null)
+    {
+        if (is_array($complaintCount)) {
+            $useMinMax = false;
+            if (isset($complaintCount['min'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_COMPLAINT_COUNT, $complaintCount['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($complaintCount['max'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_COMPLAINT_COUNT, $complaintCount['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(QuestionTableMap::COL_COMPLAINT_COUNT, $complaintCount, $comparison);
+    }
+
+    /**
+     * Filter the query on the category column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCategory('fooValue');   // WHERE category = 'fooValue'
+     * $query->filterByCategory('%fooValue%'); // WHERE category LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $category The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function filterByCategory($category = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($category)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $category)) {
+                $category = str_replace('*', '%', $category);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(QuestionTableMap::COL_CATEGORY, $category, $comparison);
+    }
+
+    /**
+     * Filter the query on the category_stem column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCategoryStem('fooValue');   // WHERE category_stem = 'fooValue'
+     * $query->filterByCategoryStem('%fooValue%'); // WHERE category_stem LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $categoryStem The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function filterByCategoryStem($categoryStem = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($categoryStem)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $categoryStem)) {
+                $categoryStem = str_replace('*', '%', $categoryStem);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(QuestionTableMap::COL_CATEGORY_STEM, $categoryStem, $comparison);
     }
 
     /**
