@@ -3,7 +3,8 @@
     "slim/slim": "^3.0@RC",
     "aws/aws-sdk-php": "^3.8",
     "propel/propel": "^2.0@dev",
-    "guzzlehttp/guzzle": "^6.1"
+    "guzzlehttp/guzzle": "^6.1",
+    "camspiers/porter-stemmer": "1.0.0"
   },
   "autoload": {
     "files": [
